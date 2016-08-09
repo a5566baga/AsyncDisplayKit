@@ -1957,7 +1957,7 @@ static bool stringContainsPointer(NSString *description, const void *p) {
 {
   ASTestDisplayNode *node = [[[ASTestDisplayNode alloc] init] autorelease];
 
-  [node recursivelySetInterfaceState:ASInterfaceStateDisplay];
+  [node recursivelySetInterfaceState:ASInterfaceStateRender];
   
   XCTAssert([node displayRangeStateChangedToYES]);
 }
@@ -1966,7 +1966,7 @@ static bool stringContainsPointer(NSString *description, const void *p) {
 {
   ASTestDisplayNode *node = [[[ASTestDisplayNode alloc] init] autorelease];
   
-  [node recursivelySetInterfaceState:ASInterfaceStateDisplay];
+  [node recursivelySetInterfaceState:ASInterfaceStateRender];
   [node recursivelySetInterfaceState:ASInterfaceStateFetchData];
   
   XCTAssert([node displayRangeStateChangedToNO]);
@@ -1986,7 +1986,7 @@ static bool stringContainsPointer(NSString *description, const void *p) {
   ASTestDisplayNode *node = [[[ASTestDisplayNode alloc] init] autorelease];
   
   [node recursivelySetInterfaceState:ASInterfaceStateFetchData];
-  [node recursivelySetInterfaceState:ASInterfaceStateDisplay];
+  [node recursivelySetInterfaceState:ASInterfaceStateRender];
 
   XCTAssert([node loadStateChangedToNO]);
 }

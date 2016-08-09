@@ -238,36 +238,61 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)interfaceStateDidChange:(ASInterfaceState)newState fromState:(ASInterfaceState)oldState ASDISPLAYNODE_REQUIRES_SUPER;
 
 /**
- * @abstract Called whenever the visiblity of the node changed.
+ * @abstract Called whenever the node has become visible onscreen, at least partially.
  *
  * @discussion Subclasses may use this to monitor when they become visible.
  */
-- (void)visibilityDidChange:(BOOL)isVisible ASDISPLAYNODE_REQUIRES_SUPER;
+- (void)didEnterVisibleRange ASDISPLAYNODE_REQUIRES_SUPER;
 
 /**
- * @abstract Called whenever the visiblity of the node changed.
+ * @abstract Called whenever the node has become no longer visible onscreen at all.
  *
- * @discussion Subclasses may use this to monitor when they become visible.
+ * @discussion Subclasses may use this to monitor when they become invisible.
  */
-- (void)visibleStateDidChange:(BOOL)isVisible ASDISPLAYNODE_REQUIRES_SUPER;
+- (void)didExitVisibleRange ASDISPLAYNODE_REQUIRES_SUPER;
 
 /**
- * @abstract Called whenever the the node has entered or exited the display state.
+ * @abstract Called whenever the the node has entered the rendering range.
  *
- * @discussion Subclasses may use this to monitor when a node should be rendering its content.
+ * @discussion Nodes are rendered asynchronously before they become visible to ensure
+ *    smooth scrolling. This method is called when the node is expected to become visible
+ *    soon, for example if the user is scrolling toward the node, and AsyncDisplayKit will
+ *    schedule the node for rendering.
  *
  * @note This method can be called from any thread and should therefore be thread safe.
  */
-- (void)displayStateDidChange:(BOOL)inDisplayState ASDISPLAYNODE_REQUIRES_SUPER;
+- (void)didEnterRenderRange ASDISPLAYNODE_REQUIRES_SUPER;
 
 /**
- * @abstract Called whenever the the node has entered or left the load state.
+ * @abstract Called whenever the the node has exited the rendering range.
  *
- * @discussion Subclasses may use this to monitor data for a node should be loaded, either from a local or remote source.  
+ * @see -didEnterRenderRange
  *
  * @note This method can be called from any thread and should therefore be thread safe.
  */
-- (void)loadStateDidChange:(BOOL)inLoadState ASDISPLAYNODE_REQUIRES_SUPER;
+- (void)didExitRenderRange ASDISPLAYNODE_REQUIRES_SUPER;
+
+/**
+ * @abstract Called whenever the the node has entered the fetch data range.
+ *
+ * @discussion When a node is expected to become visible soon, this method is called
+ *    to allow subclasses to fetch data asynchronously to prepare the node.
+ *    As an example, ASNetworkImageNode uses this method to fetch its image.
+ *    The node should release these resources in `didExitFetchDataRange` to minimize 
+ *    memory consumption.
+ *
+ * @note This method can be called from any thread and should therefore be thread safe.
+ */
+- (void)didEnterFetchDataRange ASDISPLAYNODE_REQUIRES_SUPER;
+
+/**
+ * @abstract Called whenever the the node has exited the fetch data range.
+ *
+ * @see -didEnterFetchDataRange
+ *
+ * @note This method can be called from any thread and should therefore be thread safe.
+ */
+- (void)didExitFetchDataRange ASDISPLAYNODE_REQUIRES_SUPER;
 
 /**
  * Called just before the view is added to a window.

@@ -21,9 +21,9 @@ inline BOOL ASInterfaceStateIncludesVisible(ASInterfaceState interfaceState)
   return ((interfaceState & ASInterfaceStateVisible) == ASInterfaceStateVisible);
 }
 
-inline BOOL ASInterfaceStateIncludesDisplay(ASInterfaceState interfaceState)
+inline BOOL ASInterfaceStateIncludesRender(ASInterfaceState interfaceState)
 {
-  return ((interfaceState & ASInterfaceStateDisplay) == ASInterfaceStateDisplay);
+  return ((interfaceState & ASInterfaceStateRender) == ASInterfaceStateRender);
 }
 
 inline BOOL ASInterfaceStateIncludesFetchData(ASInterfaceState interfaceState)
@@ -48,7 +48,7 @@ inline NSString * _Nonnull NSStringFromASInterfaceState(ASInterfaceState interfa
   if (ASInterfaceStateIncludesFetchData(interfaceState)) {
     [states addObject:@" | FetchData"];
   }
-  if (ASInterfaceStateIncludesDisplay(interfaceState)) {
+  if (ASInterfaceStateIncludesRender(interfaceState)) {
     [states addObject:@" | Display"];
   }
   if (ASInterfaceStateIncludesVisible(interfaceState)) {

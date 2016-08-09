@@ -25,7 +25,7 @@ extern ASInterfaceState ASInterfaceStateForDisplayNode(ASDisplayNode *displayNod
         return (window == nil ? (interfaceState &= (~ASInterfaceStateVisible)) : interfaceState);
     } else {
         // For not range managed nodes we might be on our own to try to guess if we're visible.
-        return (window == nil ? ASInterfaceStateNone : (ASInterfaceStateVisible | ASInterfaceStateDisplay));
+        return (window == nil ? ASInterfaceStateNone : (ASInterfaceStateVisible | ASInterfaceStateRender));
     }
 }
 

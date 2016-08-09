@@ -269,13 +269,13 @@ static UIApplicationState __ApplicationState = UIApplicationStateActive;
     
     if (ASInterfaceStateIncludesVisible(selfInterfaceState)) {
       if ([visibleIndexPaths containsObject:indexPath]) {
-        interfaceState |= (ASInterfaceStateVisible | ASInterfaceStateDisplay | ASInterfaceStateFetchData);
+        interfaceState |= (ASInterfaceStateVisible | ASInterfaceStateRender | ASInterfaceStateFetchData);
       } else {
         if ([fetchDataIndexPaths containsObject:indexPath]) {
           interfaceState |= ASInterfaceStateFetchData;
         }
         if ([displayIndexPaths containsObject:indexPath]) {
-          interfaceState |= ASInterfaceStateDisplay;
+          interfaceState |= ASInterfaceStateRender;
         }
       }
     } else {
@@ -294,7 +294,7 @@ static UIApplicationState __ApplicationState = UIApplicationStateActive;
           // Add Display.
           // We might be looking at an indexPath that was previously in-range, but now we need to clear it.
           // In that case we'll just set it back to MeasureLayout.  Only set Display | FetchData if in allCurrentIndexPaths.
-          interfaceState |= ASInterfaceStateDisplay;
+          interfaceState |= ASInterfaceStateRender;
         }
       }
     }
@@ -468,8 +468,8 @@ static UIApplicationState __ApplicationState = UIApplicationStateActive;
 {
   for (NSArray *section in [_dataSource completedNodes]) {
     for (ASDisplayNode *node in section) {
-      if (ASInterfaceStateIncludesDisplay(node.interfaceState)) {
-        [node exitInterfaceState:ASInterfaceStateDisplay];
+      if (ASInterfaceStateIncludesRender(node.interfaceState)) {
+        [node exitInterfaceState:ASInterfaceStateRender];
       }
     }
   }
@@ -520,7 +520,7 @@ static ASLayoutRangeMode __rangeModeForMemoryWarnings = ASLayoutRangeModeVisible
 {
   NSArray *allRangeControllers = [[self allRangeControllersWeakSet] allObjects];
   for (ASRangeController *rangeController in allRangeControllers) {
-    BOOL isDisplay = ASInterfaceStateIncludesDisplay([rangeController interfaceState]);
+    BOOL isDisplay = ASInterfaceStateIncludesRender([rangeController interfaceState]);
     [rangeController updateCurrentRangeWithMode:isDisplay ? ASLayoutRangeModeMinimum : __rangeModeForMemoryWarnings];
     [rangeController setNeedsUpdate];
     [rangeController updateIfNeeded];
@@ -589,7 +589,7 @@ static ASLayoutRangeMode __rangeModeForMemoryWarnings = ASLayoutRangeModeVisible
     ASDisplayNode *node = [_dataSource rangeController:self nodeAtIndexPath:indexPath];
     ASInterfaceState interfaceState = node.interfaceState;
     BOOL inVisible = ASInterfaceStateIncludesVisible(interfaceState);
-    BOOL inDisplay = ASInterfaceStateIncludesDisplay(interfaceState);
+    BOOL inDisplay = ASInterfaceStateIncludesRender(interfaceState);
     BOOL inFetchData = ASInterfaceStateIncludesFetchData(interfaceState);
     [description appendFormat:@"indexPath %@, Visible: %d, Display: %d, FetchData: %d\n", indexPath, inVisible, inDisplay, inFetchData];
   }

@@ -205,7 +205,7 @@
 - (void)doPlayerLayerNodeIsNotAddedIfVisibleButShouldNotBePlaying
 {
   [_videoNode pause];
-  [_videoNode setInterfaceState:ASInterfaceStateVisible | ASInterfaceStateDisplay];
+  [_videoNode setInterfaceState:ASInterfaceStateVisible | ASInterfaceStateRender];
   [_videoNode didLoad];
   
   XCTAssert(![_videoNode.subnodes containsObject:_videoNode.playerNode]);
@@ -311,7 +311,7 @@
   _videoNode.shouldAutorepeat = NO;
 
   [_videoNode didLoad];
-  [_videoNode setInterfaceState:ASInterfaceStateVisible | ASInterfaceStateDisplay | ASInterfaceStateFetchData];
+  [_videoNode setInterfaceState:ASInterfaceStateVisible | ASInterfaceStateRender | ASInterfaceStateFetchData];
   [_videoNode prepareToPlayAsset:assetMock withKeys:_requestedKeys];
   [_videoNode play];
   
@@ -332,7 +332,7 @@
   _videoNode.shouldAutorepeat = YES;
 
   [_videoNode didLoad];
-  [_videoNode setInterfaceState:ASInterfaceStateVisible | ASInterfaceStateDisplay | ASInterfaceStateFetchData];
+  [_videoNode setInterfaceState:ASInterfaceStateVisible | ASInterfaceStateRender | ASInterfaceStateFetchData];
   [_videoNode prepareToPlayAsset:assetMock withKeys:_requestedKeys];
   [_videoNode play];
 
@@ -348,7 +348,7 @@
   
   _videoNode.asset = assetMock;
 
-  [_videoNode setInterfaceState:ASInterfaceStateVisible | ASInterfaceStateDisplay | ASInterfaceStateFetchData];
+  [_videoNode setInterfaceState:ASInterfaceStateVisible | ASInterfaceStateRender | ASInterfaceStateFetchData];
   [_videoNode prepareToPlayAsset:assetMock withKeys:_requestedKeys];
   [_videoNode pause];
   _videoNode.shouldBePlaying = YES;

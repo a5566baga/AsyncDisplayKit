@@ -1168,7 +1168,7 @@ static ASDisplayNodeMethodOverrides GetASDisplayNodeMethodOverrides(Class c)
 
 - (void)__setNeedsDisplay
 {
-  BOOL nowDisplay = ASInterfaceStateIncludesDisplay(_interfaceState);
+  BOOL nowDisplay = ASInterfaceStateIncludesRender(_interfaceState);
   // FIXME: This should not need to recursively display, so create a non-recursive variant.
   // The semantics of setNeedsDisplay (as defined by CALayer behavior) are not recursive.
   if (_layer && !_flags.synchronous && nowDisplay && [self __implementsDisplay]) {
@@ -2377,7 +2377,7 @@ void recursivelyTriggerDisplayForLayer(CALayer *layer, BOOL shouldBlock)
 - (void)setInterfaceState:(ASInterfaceState)newState
 {
   // It should never be possible for a node to be visible but not be allowed / expected to display.
-  ASDisplayNodeAssertFalse(ASInterfaceStateIncludesVisible(newState) && !ASInterfaceStateIncludesDisplay(newState));
+  ASDisplayNodeAssertFalse(ASInterfaceStateIncludesVisible(newState) && !ASInterfaceStateIncludesRender(newState));
   ASInterfaceState oldState = ASInterfaceStateNone;
   {
     ASDN::MutexLocker l(__instanceLock__);
@@ -2413,12 +2413,12 @@ void recursivelyTriggerDisplayForLayer(CALayer *layer, BOOL shouldBlock)
   }
 
   // Entered or exited contents rendering state.
-  BOOL nowDisplay = ASInterfaceStateIncludesDisplay(newState);
-  BOOL wasDisplay = ASInterfaceStateIncludesDisplay(oldState);
+  BOOL nowRender = ASInterfaceStateIncludesRender(newState);
+  BOOL wasRender = ASInterfaceStateIncludesRender(oldState);
 
-  if (nowDisplay != wasDisplay) {
+  if (nowRender != wasRender) {
     if ([self supportsRangeManagedInterfaceState]) {
-      if (nowDisplay) {
+      if (nowRender) {
         // Once the working window is eliminated (ASRangeHandlerRender), trigger display directly here.
         [self setDisplaySuspended:NO];
       } else {
@@ -2426,7 +2426,7 @@ void recursivelyTriggerDisplayForLayer(CALayer *layer, BOOL shouldBlock)
         //schedule clear contents on next runloop
         dispatch_async(dispatch_get_main_queue(), ^{
           ASDN::MutexLocker l(__instanceLock__);
-          if (ASInterfaceStateIncludesDisplay(_interfaceState) == NO) {
+          if (ASInterfaceStateIncludesRender(_interfaceState) == NO) {
             [self clearContents];
           }
         });
@@ -2437,14 +2437,14 @@ void recursivelyTriggerDisplayForLayer(CALayer *layer, BOOL shouldBlock)
       if (!ASInterfaceStateIncludesVisible(newState)) {
         // Check __implementsDisplay purely for efficiency - it's faster even than calling -asyncLayer.
         if ([self __implementsDisplay]) {
-          if (nowDisplay) {
+          if (nowRender) {
             [ASDisplayNode scheduleNodeForRecursiveDisplay:self];
           } else {
             [[self asyncLayer] cancelAsyncDisplay];
             //schedule clear contents on next runloop
             dispatch_async(dispatch_get_main_queue(), ^{
               ASDN::MutexLocker l(__instanceLock__);
-              if (ASInterfaceStateIncludesDisplay(_interfaceState) == NO) {
+              if (ASInterfaceStateIncludesRender(_interfaceState) == NO) {
                 [self clearContents];
               }
             });
@@ -2453,7 +2453,7 @@ void recursivelyTriggerDisplayForLayer(CALayer *layer, BOOL shouldBlock)
       }
     }
     
-    [self displayStateDidChange:nowDisplay];
+    [self displayStateDidChange:nowRender];
   }
 
   // Became visible or invisible.  When range-managed, this represents literal visibility - at least one pixel
@@ -2510,8 +2510,8 @@ void recursivelyTriggerDisplayForLayer(CALayer *layer, BOOL shouldBlock)
 
 - (BOOL)shouldScheduleDisplayWithNewInterfaceState:(ASInterfaceState)newInterfaceState
 {
-  BOOL willDisplay = ASInterfaceStateIncludesDisplay(newInterfaceState);
-  BOOL nowDisplay = ASInterfaceStateIncludesDisplay(self.interfaceState);
+  BOOL willDisplay = ASInterfaceStateIncludesRender(newInterfaceState);
+  BOOL nowDisplay = ASInterfaceStateIncludesRender(self.interfaceState);
   return willDisplay && (willDisplay != nowDisplay);
 }
 
